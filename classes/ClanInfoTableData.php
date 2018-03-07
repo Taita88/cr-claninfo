@@ -31,24 +31,22 @@ class ClanInfoTableData
     private function fillMembers()
     {
         $member_dao = new MemberDao();
-        $member_tags_from_last_cycle = $member_dao->getMemberTagsFromLastCycle();        
+        $member_tags_from_last_cycle = $member_dao->getMemberTagsFromLastCycle();
         
-        foreach ($member_tags_from_last_cycle as $member_tag_from_last_cycle) 
-        {
+        foreach ($member_tags_from_last_cycle as $member_tag_from_last_cycle) {
             $info_table_member_data = new InfoTableMemeberData();
             $info_table_member_data->setTag($member_tag_from_last_cycle);
             
-            $member_datas = $member_dao->getMemberDataByTag($member_tag_from_last_cycle);
+            //TODO: filling missing cycles with empty values is a QoL improvement for generating table via PHP
+            //In case we decide to generate table via JS so we will send JSON to FE probably we will no longer need this step
+            $member_datas = $this->fillMemberMissingCycles($member_dao->getMemberDataByTag($member_tag_from_last_cycle));
             
-            foreach ($member_datas as $member_data) 
-            {
-                if (null == ($info_table_member_data->getName())) 
-                {
+            foreach ($member_datas as $member_data) {
+                if (null == ($info_table_member_data->getName())) {
                     $info_table_member_data->setName($member_data['name']);
                 }
                 
                 $info_table_member_data->addAction($member_data['donations'], $member_data['clan_chest_crowns'], $member_data['year'], $member_data['week_of_year']);
-                              
             }
             
             $index = sizeof($this->members);
@@ -56,14 +54,62 @@ class ClanInfoTableData
         }
     }
 
-    public function getMembers()
+    private function fillMemberMissingCycles($member_datas): array
+    {
+        $member_datas_prefilled = array();
+        foreach ($this->cycles as $cycle) {
+            $member_datas_prefilled[] = array(
+                "donations" => "",
+                "clan_chest_crowns" => "",
+                "year" => $cycle->getYear(),
+                "week_of_year" => $cycle->getWeekOfYear(),
+                "name" => ""
+            );
+        }       
+        
+        for ($i = 0; $i < count($member_datas_prefilled); $i++) {
+            foreach ($member_datas as $member_data){
+                if($member_datas_prefilled[$i]['year'] == $member_data['year'] && $member_datas_prefilled[$i]['week_of_year'] == $member_data['week_of_year']){
+                    $member_datas_prefilled[$i]['donations'] = $member_data['donations'];
+                    $member_datas_prefilled[$i]['clan_chest_crowns'] = $member_data['clan_chest_crowns'];
+                    $member_datas_prefilled[$i]['name'] = $member_data['name'];
+                }
+            }
+        }
+        
+        return $member_datas_prefilled;
+    }
+
+    public function getMembers(): array
     {
         return $this->members;
     }
 
-    public function getCycles()
+    public function getCycles(): array
     {
         return $this->cycles;
+    }
+
+    public function toAssocArray(): array
+    {
+        $cycles = array();
+        foreach ($this->getCycles() as $cycle_element) {
+            $cycle = $cycle_element->toAssocArray();
+            $cycles[] = $cycle;
+        }
+        
+        $members = array();
+        foreach ($this->getMembers() as $member_element) {
+            $member = $member_element->toAssocArray();
+            $members[] = $member;
+        }
+        
+        $clan_info_table_data[] = array(
+            "cycles" => $cycles,
+            "members" => $members
+        );
+        
+        return $clan_info_table_data;
     }
 }
 
@@ -113,13 +159,27 @@ class InfoTableMemeberData
         
         $this->action_per_cycle[$index] = $cycle_with_action;
     }
+
+    public function toAssocArray(): array
+    {
+        $actions_per_cycle = array();
+        foreach ($this->action_per_cycle as $action_per_cycle_element) {
+            $action_per_cycle = $action_per_cycle_element->toAssocArray();
+            $actions_per_cycle[] = $action_per_cycle;
+        }
+        return array(
+            "tag" => $this->tag,
+            "name" => $this->name,
+            "actions_per_cycle" => $actions_per_cycle
+        );
+    }
 }
 
 class CycleWithAction
 {
 
     private $year;
-    
+
     private $week_of_year;
 
     private $donation;
@@ -143,16 +203,26 @@ class CycleWithAction
     {
         return $this->crown;
     }
+
     public function getYear()
     {
         return $this->year;
     }
 
-    public function getWeek_of_year()
+    public function getWeekOfYear()
     {
         return $this->week_of_year;
     }
-    
+
+    public function toAssocArray(): array
+    {
+        return array(
+            "year" => $this->year,
+            "week_of_year" => $this->week_of_year,
+            "donation" => $this->donation,
+            "crown" => $this->crown
+        );
+    }
 }
 
 class CyclePair
@@ -173,19 +243,17 @@ class CyclePair
         return $this->year;
     }
 
-    public function getWeek_of_year()
+    public function getWeekOfYear()
     {
         return $this->week_of_year;
     }
 
-    public function setYear($year)
+    public function toAssocArray(): array
     {
-        $this->year = $year;
-    }
-
-    public function setWeek_of_year($week_of_year)
-    {
-        $this->week_of_year = $week_of_year;
+        return array(
+            "year" => $this->year,
+            "week_of_year" => $this->week_of_year
+        );
     }
 }
 

@@ -17,29 +17,51 @@ use Monolog\Handler\StreamHandler;
     
     <?php
     
-//     $log = new Logger('name');
-//     $log->pushHandler(new StreamHandler('cr.log', Logger::DEBUG));
-//     $log->debug("Logging");
+    // $log = new Logger('name');
+    // $log->pushHandler(new StreamHandler('cr.log', Logger::DEBUG));
+    // $log->debug("Logging");
     
-//     $date1 = new DateTime();
-//     echo "rok = " . (int) $date1->format("Y") . " tyzden v roku= " . (int) $date1->format("W");
-//     echo "<br>";
     
-//     $date = new DateTime("2019-01-01");
-//     $date->add(DateInterval::createFromDateString('yesterday'));
+    // var_dump($cycle_dao->getAllCycleWithMembers());
     
-//     echo "rok = " . (int) $date->format("Y") . " tyzden v roku= " . (int) $date->format("W");
+    $clan_info_table_data = new ClanInfoTableData();
     
-//     $cycle_dao = new CycleDao();
-//     $member_dao = new MemberDao();
-//     var_dump($cycle_dao->getAllCycleWithMembers());
-
-//     $clan_info_table_data = new
-
-//     var_dump(new ClanInfoTableData());
+    echo "<tr>";
+    echo "<td></td>";
+    
+    foreach ($clan_info_table_data->getCycles() as $cycle) 
+    {
+        echo "<td>" . $cycle->getYear() . "/" . $cycle->getWeekOfYear() . "</td>";
+    }
+    
+    echo "</tr>";
+        
+    $i = 1;
+    foreach ($clan_info_table_data->getMembers() as $member)
+    {
+        
+        echo "<tr>";
+        echo "<td>" . $i++ . " " . $member->getName() . "</td>";
+            
+        foreach ($member->getActionPerCycle() as $action_per_cycle)
+        {
+            echo "<td>" . $action_per_cycle->getDonation() . "</td>";
+        }
+        
+        echo "</tr>";
+    }
+    
+    
+    
+    // var_dump(new ClanInfoTableData());
     
     ?>
     </table>
+    
+    <?php 
+//     $json = json_encode((array)($clan_info_table_data->toAssocArray()), JSON_PRETTY_PRINT);
+//         echo "<br>" . $json;
+    ?>
 
 
 </body>
