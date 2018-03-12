@@ -25,12 +25,12 @@ if (! isset($_GET['order']) || $_GET['order'] == null) {
     switch ($order) {
         
         case "crown_job":
-            echo "running crown job";
+       //     echo "running crown job";
             runJobForCrowns();
             break;
         
         case "donation_job":
-            echo "running donation job";
+       //     echo "running donation job";
             runJobForDonations();
             break;
     }
@@ -47,7 +47,7 @@ function runJobForDonations()
     $cycleDb = getCycleFromDBOrCreate((int) $date->format("Y"), (int) $date->format("W"));
     
     $cr_api_communicator = new CrApiCommunicator();
-    $members = $cr_api_communicator->getClanMembers();
+    $members = $cr_api_communicator->getClanMembers();   
     
     $member_dao = new MemberDao();
     

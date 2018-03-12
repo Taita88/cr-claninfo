@@ -1,4 +1,5 @@
 <html>
+
   
 <?php
 require __DIR__ . '/vendor/autoload.php';
@@ -9,6 +10,8 @@ spl_autoload_register(function ($class_name) {
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+
+header('Content-Type: text/html; charset=utf-8');
 
 ?>
 

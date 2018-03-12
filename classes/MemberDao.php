@@ -40,7 +40,7 @@ class MemberDao
     public function createMember($member)
     {
         $query = "INSERT INTO member (cycle_id, tag, name, donations, clan_chest_crowns) " . "VALUES (" . $member->getCycleId() . ", " . "'" . $member->getTag() . "'," . "'" . $member->getName() . "'," . "" . $member->getDonations() . "," . "" . $member->getClanChestCrowns() . ")";
-        
+
         $this->connection->exec($query);
         return $this->connection->lastInsertId();
     }
@@ -48,7 +48,7 @@ class MemberDao
     public function updateMember($member)
     {
         $query = "UPDATE member SET " . "donations=" . $member->getDonations() . " , " . "clan_chest_crowns=" . $member->getClanChestCrowns() . " , " . "name='" . $member->getName() . "' " . "WHERE id='" . $member->getId() . "' ";
-        
+
         try {
             $this->connection->query($query);
             // echo "Record updated successfully";

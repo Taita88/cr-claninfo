@@ -54,7 +54,7 @@ class ClanInfoTableData
         }
     }
 
-    private function fillMemberMissingCycles($member_datas): array
+    private function fillMemberMissingCycles($member_datas)
     {
         $member_datas_prefilled = array();
         foreach ($this->cycles as $cycle) {
@@ -80,17 +80,17 @@ class ClanInfoTableData
         return $member_datas_prefilled;
     }
 
-    public function getMembers(): array
+    public function getMembers()
     {
         return $this->members;
     }
 
-    public function getCycles(): array
+    public function getCycles()
     {
         return $this->cycles;
     }
 
-    public function toAssocArray(): array
+    public function toAssocArray()
     {
         $cycles = array();
         foreach ($this->getCycles() as $cycle_element) {
@@ -160,7 +160,7 @@ class InfoTableMemeberData
         $this->action_per_cycle[$index] = $cycle_with_action;
     }
 
-    public function toAssocArray(): array
+    public function toAssocArray()
     {
         $actions_per_cycle = array();
         foreach ($this->action_per_cycle as $action_per_cycle_element) {
@@ -214,7 +214,7 @@ class CycleWithAction
         return $this->week_of_year;
     }
 
-    public function toAssocArray(): array
+    public function toAssocArray()
     {
         return array(
             "year" => $this->year,
@@ -248,7 +248,7 @@ class CyclePair
         return $this->week_of_year;
     }
 
-    public function toAssocArray(): array
+    public function toAssocArray()
     {
         return array(
             "year" => $this->year,
